@@ -4,3 +4,10 @@ C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoek
 C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Debug\project.csprojResolveAssemblyReference.cache
 C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Debug\project.exe
 C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Debug\project.pdb
+C:\Users\Timo\Documents\onderzoeksmethoden\project\bin\Debug\project.exe.config
+C:\Users\Timo\Documents\onderzoeksmethoden\project\obj\Debug\project.csprojResolveAssemblyReference.cache
+C:\Users\Timo\Documents\onderzoeksmethoden\project\obj\Debug\project.csproj.ResolveComReference.cache
+C:\Users\Timo\Documents\onderzoeksmethoden\project\bin\Debug\project.exe
+C:\Users\Timo\Documents\onderzoeksmethoden\project\bin\Debug\project.pdb
+C:\Users\Timo\Documents\onderzoeksmethoden\project\obj\Debug\project.exe
+C:\Users\Timo\Documents\onderzoeksmethoden\project\obj\Debug\project.pdb
