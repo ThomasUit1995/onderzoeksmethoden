@@ -1,0 +1,6 @@
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\bin\Debug\project.exe.config
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\bin\Debug\project.exe
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\bin\Debug\project.pdb
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Debug\project.csprojResolveAssemblyReference.cache
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Debug\project.exe
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Debug\project.pdb
