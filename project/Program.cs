@@ -114,7 +114,7 @@ namespace project
             currentTimeFrame = 0;
             maxTimeFrame = 480;
             peakTime = 280;
-            peakNewVisitors = 20;
+            peakNewVisitors = 10;
             visitorsInQueue = 0;
             layout = new Dictionary<int, FoodTruck>();
             visitors = new List<Visitor>();
@@ -178,7 +178,7 @@ namespace project
             this.location = location;
             this.appeal = appeal;
             neighbours = new List<int>();
-            serviceRate = 3;
+            serviceRate = 1;
             queue = new Queue<Visitor>();
         }
 
