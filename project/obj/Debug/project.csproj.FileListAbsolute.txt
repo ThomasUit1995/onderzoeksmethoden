@@ -11,3 +11,4 @@ C:\Users\Timo\Documents\onderzoeksmethoden\project\bin\Debug\project.exe
 C:\Users\Timo\Documents\onderzoeksmethoden\project\bin\Debug\project.pdb
 C:\Users\Timo\Documents\onderzoeksmethoden\project\obj\Debug\project.exe
 C:\Users\Timo\Documents\onderzoeksmethoden\project\obj\Debug\project.pdb
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Debug\project.csproj.ResolveComReference.cache
