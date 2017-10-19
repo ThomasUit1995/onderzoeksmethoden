@@ -93,6 +93,19 @@ namespace project
                 }
                 currentTimeFrame++;
             }
+            foreach (KeyValuePair<int, FoodTruck> k in layout)
+            {
+                Console.WriteLine("APPEAL: {0} LOCATION: {1}", k.Value.appeal,k.Value.location);
+                foreach (int i in k.Value.queueArray)
+                {
+                    Console.WriteLine(i);
+                }
+                Console.WriteLine("-----------------------------------------------------------------------------");
+            }
+            while (true)
+            {
+
+            }
         }
 
         static void Initialise()
@@ -101,7 +114,7 @@ namespace project
             currentTimeFrame = 0;
             maxTimeFrame = 480;
             peakTime = 280;
-            peakNewVisitors = 30;
+            peakNewVisitors = 20;
             visitorsInQueue = 0;
             layout = new Dictionary<int, FoodTruck>();
             visitors = new List<Visitor>();
@@ -171,7 +184,7 @@ namespace project
 
         public double QueueTime()
         {
-            return (queue.Count / serviceRate);
+            return (queue.Count * serviceRate);
         }
 
         public void AddNeighbour(int trucklocation)
@@ -216,6 +229,7 @@ namespace project
             locationsVisited = new bool[Program.numberOfFoodtrucks];
             isEating = false;
             eatingProgress = 0;
+            maxTotalTime = 240;
         }
 
         public double ChanceOfLeaving()
@@ -269,10 +283,10 @@ namespace project
 
             int i = Program.r.Next(1, 101);
 
-            if (i <= a40Left || i > a40Right) return 4;
-            else if (i <= a10Left || i > a10Right) return 1;
-            else if (i <= a20Left || i > a20Right) return 2;
-            else return 3;
+            if (i <= a40Left || i > a40Right) return 40;
+            else if (i <= a10Left || i > a10Right) return 10;
+            else if (i <= a20Left || i > a20Right) return 20;
+            else return 30;
 
             //Anders
 
