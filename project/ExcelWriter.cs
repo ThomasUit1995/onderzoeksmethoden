@@ -41,7 +41,7 @@ namespace project
         {
             oXL.Visible = false;
             oXL.UserControl = false;
-            string name = String.Format("Chance of entering = {0} Simulations = {1}", Program.chanceOfEntering,Program.amountOfSimulations);
+            string name = String.Format("Chance of entering = {0} Simulations = {1}.xlsx", Program.chanceOfEntering,Program.amountOfSimulations);
             oWB.SaveAs(filepath + name, XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
                 false, false, XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
 
@@ -53,18 +53,18 @@ namespace project
             oSheet.Cells[1 + simulationOffset, 1 + trucksWritten * outputWidth] = String.Format("Truck At Position {0}", truck.location);
             oSheet.Cells[2 + simulationOffset, 1 + trucksWritten * outputWidth] = "Current Time Frame";
             oSheet.Cells[2 + simulationOffset, 2 + trucksWritten * outputWidth] = "Queue Size";
-            oSheet.Cells[2 + simulationOffset, 3 + trucksWritten * outputWidth] = "Current Appeal";
-            oSheet.Cells[2 + simulationOffset, 4 + trucksWritten * outputWidth] = "Visitors that got in line";
-            oSheet.Cells[2 + simulationOffset, 5 + trucksWritten * outputWidth] = "Visitors that didn't get in line";
+            //oSheet.Cells[2 + simulationOffset, 3 + trucksWritten * outputWidth] = "Current Appeal";
+          //  oSheet.Cells[2 + simulationOffset, 4 + trucksWritten * outputWidth] = "Visitors that got in line";
+           // oSheet.Cells[2 + simulationOffset, 5 + trucksWritten * outputWidth] = "Visitors that didn't get in line";
             //The timeframes
             for (int i = 0; i < Program.maxTimeFrame; i++)
             {
                 oSheet.Cells[3 + i + simulationOffset, 1 + trucksWritten * outputWidth] = i;
             }
             WriteArray(truck.queueArray, null, 2, simulationOffset);
-            WriteArray(null, truck.actualAppeal, 3, simulationOffset);
-            WriteArray (truck.gotInLine, null, 4, simulationOffset);
-            WriteArray(truck.didntGetInLine, null, 5, simulationOffset);
+            //WriteArray(null, truck.actualAppeal, 3, simulationOffset);
+            //WriteArray (truck.gotInLine, null, 4, simulationOffset);
+           // WriteArray(truck.didntGetInLine, null, 5, simulationOffset);
             trucksWritten++;
             if (trucksWritten == Program.numberOfFoodtrucks && Program.currentsimulation == Program.amountOfSimulations - 1)
             {
@@ -82,9 +82,9 @@ namespace project
                         oSheet.Cells[3 + j + simOffSet, 1 + trucksWritten * outputWidth] = j;
                     }
                     double[] averageQueues = getAverages(2);
-                    double[] averageAppeal = getAverages(3);
+                    //double[] averageAppeal = getAverages(3);
                     WriteArray(null, averageQueues, 2, simOffSet);
-                    WriteArray(null, averageAppeal, 3, simOffSet);
+                   // WriteArray(null, averageAppeal, 3, simOffSet);
                     trucksWritten++;
                 }
             }

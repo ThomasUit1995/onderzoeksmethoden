@@ -21,7 +21,7 @@ namespace project
         public static Dictionary<int, FoodTruck> layout; //Foodtrucks and their numbered location in the layout;
         public static List<Visitor> visitors;
         public static ExcelWriter writer;
-        public const double chanceOfEntering = 0.6;
+        public const double chanceOfEntering = 0.2;
         public static Random r; //random number generator
 
         static void Main(string[] args)
@@ -167,7 +167,7 @@ namespace project
         {
             //int deltaPeakTime = Math.Abs((currentTimeFrame/2) - peakTime); //how far away from peaktime it is (on the minute)
             // return (int)(peakNewVisitors / (1 + deltaPeakTime * 0.0125)); //incoming visitors
-            return 15;
+            return 10;
         }
         public static double RandomValue()
         {
@@ -198,8 +198,8 @@ namespace project
             this.location = location;
             this.appeal = appeal;
             neighbours = new List<int>();
-            serviceRate = 1;
-            servedPerRate = 2;
+            serviceRate = 2;
+            servedPerRate = 1;
             queue = new Queue<Visitor>();
         }
 
@@ -270,11 +270,11 @@ namespace project
 
         public double ChanceOfLeaving()
         {
-            double closingProgress = (Program.currentTimeFrame / Program.maxTimeFrame);
-            if (closingProgress > 0.9)
-            {
-                return (0.5*closingProgress)+((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks) * ((double)(Program.currentTimeFrame - arrivedTime) / (double)maxTotalTime);
-            }
+           // double closingProgress = (Program.currentTimeFrame / Program.maxTimeFrame);
+          //  if (closingProgress > 0.9)
+           // {
+           //     return (0.5*closingProgress)+((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks) * ((double)(Program.currentTimeFrame - arrivedTime) / (double)maxTotalTime);
+           // }
             return ((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks);
         }
 
