@@ -1,0 +1,7 @@
+D:\onderzoeksmethoden\project\bin\Release\project.exe.config
+D:\onderzoeksmethoden\project\bin\Release\project.exe
+D:\onderzoeksmethoden\project\bin\Release\project.pdb
+D:\onderzoeksmethoden\project\obj\Release\project.csproj.ResolveComReference.cache
+D:\onderzoeksmethoden\project\obj\Release\project.exe
+D:\onderzoeksmethoden\project\obj\Release\project.pdb
+D:\onderzoeksmethoden\project\obj\Release\project.csprojResolveAssemblyReference.cache

@@ -11,130 +11,131 @@ namespace project
         const string excelFilePath = "D:\\onderzoeksmethoden\\project\\";
         public const int numberOfFoodtrucks = 8;
         public const int maxQueueTime = 20;
-        public const int amountOfSimulations = 100;
         public const int peakNewVisitors = 10; //peak amount of incoming visitors;
         public static int currentsimulation = 0;
+        public const int amountOfSimulations = 10;
         //const string excelFilePath = "C:\\Users\\Thomas\\Documents\\2017-2018\\p1_ondezoeksmethoden_gametech\\results\\";
         public static int currentTimeFrame; //current time
-        public static int maxTimeFrame; //closing time
+        public const int maxTimeFrame = 480; //closing time
         public static int peakTime; //Time with peak amount of incoming visitors;
         public static Dictionary<int, FoodTruck> layout; //Foodtrucks and their numbered location in the layout;
         public static List<Visitor> visitors;
         public static ExcelWriter writer;
+        public const double chanceOfEntering = 0.6;
         public static Random r; //random number generator
 
         static void Main(string[] args)
         {
             Initialise();
             //TODO: Initialise foodtrucks
-            while (currentTimeFrame < maxTimeFrame)
+            while (currentsimulation < amountOfSimulations)
             {
-                for (int i = 0; i < incomingVisitors(); i++)
+                ResetSimulation();
+                while (currentTimeFrame < maxTimeFrame)
                 {
-                    visitors.Add(new Visitor(currentTimeFrame));
-                }
-                foreach (Visitor v in visitors.ToList())
-                {
-                    //if not waiting
-                    if (!v.waiting)
+                    for (int i = 0; i < incomingVisitors(); i++)
                     {
-                        //Chance of leaving (early/without having passed all foodtrucks)
-                        if (r.NextDouble() <= v.ChanceOfLeaving())
+                        double rnd = r.NextDouble();
+                        if (rnd <= chanceOfEntering)
                         {
-                            visitors.Remove(v);                             //Leave
+                            visitors.Add(new Visitor(currentTimeFrame));
                         }
-                        if (!v.isEating)
+                    }
+                    foreach (Visitor v in visitors.ToList())
+                    {
+                        //if not waiting
+                        if (!v.waiting)
                         {
-                            FoodTruck truck = layout[v.location];           //Food truck at th current location
-                            if (r.NextDouble() <= v.ChanceQueueing(truck) && !v.locationsVisited[v.location] && truck.QueueTime() < maxTimeFrame - currentTimeFrame) //chance to get in line if u haven't passed this food truck yet
+                            //Chance of leaving (early/without having passed all foodtrucks)
+                            if (r.NextDouble() <= v.ChanceOfLeaving())
                             {
-                                v.GetInLine(truck); //get in line at the food truck
-                                truck.gotInLine[currentTimeFrame]++;  //got in line because of combination appeal + queuetime
-                            }      
-                            else
+                                visitors.Remove(v);                             //Leave
+                            }
+                            if (!v.isEating)
                             {
-                                if (!v.locationsVisited[v.location])
+                                FoodTruck truck = layout[v.location];           //Food truck at th current location
+                                if (r.NextDouble() <= v.ChanceQueueing(truck) && !v.locationsVisited[v.location] && truck.QueueTime() < maxTimeFrame - currentTimeFrame) //chance to get in line if u haven't passed this food truck yet
                                 {
-                                    truck.didntGetInLine[currentTimeFrame]++;    //didnt get in line because of combination appeal + queuetime
-                                }
-                                v.locationsVisited[v.location] = true;
-                                List<int> directDestinations = new List<int>(); // all not visited neighbours
-                                List<int> indirectDestinations = new List<int>();// all neighbours with not visited neighbours
-                                foreach (int l in truck.neighbours) //for every neighbour
-                                {
-                                    if (!v.locationsVisited[l])     //if not visited add them to directdestinations
-                                        directDestinations.Add(l);
-                                    else
-                                    {
-                                        foreach (int j in layout[l].neighbours) //if neighbour has neighbours that arent visited, add neighbour to indirect destinations
-                                        {
-                                            if (!v.locationsVisited[j])
-                                                indirectDestinations.Add(l);
-                                        }
-                                    }
-                                }
-                                if (directDestinations.Count == 0)                               //if all direct neighbours visited, go to a neighbour who has not visited neighbours
-                                {
-                                    if (indirectDestinations.Count == 0)                        //if no neighbours have not visited neighbours then leave the festival(seen it all(at least for this layout))
-                                        visitors.Remove(v);
-                                    else
-                                    {
-                                        int rnd = r.Next(0, indirectDestinations.Count);
-                                        v.location = indirectDestinations[rnd];   //move towards indirectly not visited neighbour
-                                    }
+                                    v.GetInLine(truck); //get in line at the food truck
+                                    truck.gotInLine[currentTimeFrame]++;  //got in line because of combination appeal + queuetime
                                 }
                                 else
                                 {
-                                    int rnd = r.Next(0, directDestinations.Count);
-                                    v.location = directDestinations[rnd];   //move to directly not visited neighbour
+                                    if (!v.locationsVisited[v.location])
+                                    {
+                                        truck.didntGetInLine[currentTimeFrame]++;    //didnt get in line because of combination appeal + queuetime
+                                    }
+                                    v.locationsVisited[v.location] = true;
+                                    List<int> directDestinations = new List<int>(); // all not visited neighbours
+                                    List<int> indirectDestinations = new List<int>();// all neighbours with not visited neighbours
+                                    foreach (int l in truck.neighbours) //for every neighbour
+                                    {
+                                        if (!v.locationsVisited[l])     //if not visited add them to directdestinations
+                                            directDestinations.Add(l);
+                                        else
+                                        {
+                                            foreach (int j in layout[l].neighbours) //if neighbour has neighbours that arent visited, add neighbour to indirect destinations
+                                            {
+                                                if (!v.locationsVisited[j])
+                                                    indirectDestinations.Add(l);
+                                            }
+                                        }
+                                    }
+                                    if (directDestinations.Count == 0)                               //if all direct neighbours visited, go to a neighbour who has not visited neighbours
+                                    {
+                                        if (indirectDestinations.Count == 0)                        //if no neighbours have not visited neighbours then leave the festival(seen it all(at least for this layout))
+                                            visitors.Remove(v);
+                                        else
+                                        {
+                                            int rnd = r.Next(0, indirectDestinations.Count);
+                                            v.location = indirectDestinations[rnd];   //move towards indirectly not visited neighbour
+                                        }
+                                    }
+                                    else
+                                    {
+                                        int rnd = r.Next(0, directDestinations.Count);
+                                        v.location = directDestinations[rnd];   //move to directly not visited neighbour
+                                    }
                                 }
                             }
+                            else { v.ProgressEating(); } //eat
                         }
-                        else { v.ProgressEating(); } //eat
-                    }
-                    
 
+
+                    }
+                    foreach (KeyValuePair<int, FoodTruck> k in layout)
+                    {
+                        k.Value.ProgressServing();
+                    }
+                    currentTimeFrame++;
                 }
+                if(currentsimulation==0)
+                    writer.OpenWorksheet();
                 foreach (KeyValuePair<int, FoodTruck> k in layout)
                 {
-                    k.Value.ProgressServing();
+                    writer.WriteArrays(k.Value);
                 }
-                currentTimeFrame++;
+                currentsimulation++;
             }
-           
-            /*foreach (KeyValuePair<int, FoodTruck> k in layout)
-            {
-                Console.WriteLine("APPEAL: {0} LOCATION: {1}", k.Value.appeal, k.Value.location);
-                for (int i = 0; i < maxTimeFrame; i++)
-                {
-                    int gotInLine = k.Value.gotInLine[i];
-                    int didntGetInLine = k.Value.didntGetInLine[i];
-                    double percentage;
-                    if (didntGetInLine+gotInLine == 0)
-                        percentage = 0;
-                    else percentage = (double)gotInLine / (double)(gotInLine+didntGetInLine);
-                    Console.WriteLine("GOTINLINE: {0} DIDNTGETINLINE: {1} QUEUETIME:{2} APPEAL: {3}", gotInLine,didntGetInLine, k.Value.queueArray[i],k.Value.actualAppeal[i]);
-                }
-                Console.WriteLine("-----------------------------------------------------------------------------");
-            }*/
-            writer.OpenWorksheet();
-            foreach(KeyValuePair<int,FoodTruck> k in layout)
-            {
-                writer.WriteArrays(k.Value);
-            }
-            currentsimulation++;
             writer.SaveSheet();
             //while (true)
             {
 
             }
         }
-
+        static void ResetSimulation()
+        {
+            writer.trucksWritten = 0;
+            currentTimeFrame = 0;
+            peakTime = 280;
+            layout = new Dictionary<int, FoodTruck>();
+            visitors = new List<Visitor>();
+            InitialiseFoodTrucks();
+        }
         static void Initialise()
         {
             writer = new ExcelWriter(excelFilePath);
             currentTimeFrame = 0;
-            maxTimeFrame = 480;
             peakTime = 280;
             layout = new Dictionary<int, FoodTruck>();
             visitors = new List<Visitor>();
@@ -164,8 +165,9 @@ namespace project
         }
         static int incomingVisitors() //incoming visitors on current timeframe
         {
-            int deltaPeakTime = Math.Abs(currentTimeFrame - peakTime); //how far away from peaktime it is
-            return (int)(peakNewVisitors / (1 + deltaPeakTime * 0.0125)); //incoming visitors
+            //int deltaPeakTime = Math.Abs((currentTimeFrame/2) - peakTime); //how far away from peaktime it is (on the minute)
+            // return (int)(peakNewVisitors / (1 + deltaPeakTime * 0.0125)); //incoming visitors
+            return 15;
         }
         public static double RandomValue()
         {
@@ -203,7 +205,7 @@ namespace project
 
         public double QueueTime()
         {
-            return (queue.Count * (serviceRate/servedPerRate));
+            return (queue.Count * ((double)serviceRate/(double)servedPerRate));
         }
 
         public void AddNeighbour(int trucklocation)
