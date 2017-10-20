@@ -8,16 +8,16 @@ namespace project
 {
     static class Program
     {
-        const string excelFilePath = "C:\\Users\\Timo\\Documents\\onderzoeksmethoden\\";
-        public const int numberOfFoodtrucks = 7;
-        public static readonly double[] appeals = { 0.4,0.8,0.55,0.6,0.7,0.65,0.3 };
+        const string excelFilePath = "D:\\onderzoeksmethoden\\project\\";
+        public const int numberOfFoodtrucks = 8;
+        public const int maxQueueTime = 20;
+        public const int amountOfSimulations = 100;
+        public const int peakNewVisitors = 10; //peak amount of incoming visitors;
+        public static int currentsimulation = 0;
         //const string excelFilePath = "C:\\Users\\Thomas\\Documents\\2017-2018\\p1_ondezoeksmethoden_gametech\\results\\";
-        public static double value = 0.2;
         public static int currentTimeFrame; //current time
         public static int maxTimeFrame; //closing time
         public static int peakTime; //Time with peak amount of incoming visitors;
-        public static int peakNewVisitors; //peak amount of incoming visitors;
-        public static int visitorsInQueue; //amount of overall visitors waiting in line
         public static Dictionary<int, FoodTruck> layout; //Foodtrucks and their numbered location in the layout;
         public static List<Visitor> visitors;
         public static ExcelWriter writer;
@@ -36,20 +36,27 @@ namespace project
                 foreach (Visitor v in visitors.ToList())
                 {
                     //if not waiting
-                    if (!v.isEating)
+                    if (!v.waiting)
                     {
-                        if (!v.waiting)
+                        //Chance of leaving (early/without having passed all foodtrucks)
+                        if (r.NextDouble() <= v.ChanceOfLeaving())
                         {
-                            //Chance of leaving (early/without having passed all foodtrucks)
-                            if (r.NextDouble() <= v.ChanceOfLeaving())
-                            {
-                                visitors.Remove(v);                             //Leave
-                            }
+                            visitors.Remove(v);                             //Leave
+                        }
+                        if (!v.isEating)
+                        {
                             FoodTruck truck = layout[v.location];           //Food truck at th current location
-                            if (r.NextDouble() <= v.ChanceQueueing(truck) && !v.locationsVisited[v.location]) //chance to get in line if u haven't passed this food truck yet
-                                v.GetInLine(truck);                 //get in line at the food truck
+                            if (r.NextDouble() <= v.ChanceQueueing(truck) && !v.locationsVisited[v.location] && truck.QueueTime() < maxTimeFrame - currentTimeFrame) //chance to get in line if u haven't passed this food truck yet
+                            {
+                                v.GetInLine(truck); //get in line at the food truck
+                                truck.gotInLine[currentTimeFrame]++;  //got in line because of combination appeal + queuetime
+                            }      
                             else
                             {
+                                if (!v.locationsVisited[v.location])
+                                {
+                                    truck.didntGetInLine[currentTimeFrame]++;    //didnt get in line because of combination appeal + queuetime
+                                }
                                 v.locationsVisited[v.location] = true;
                                 List<int> directDestinations = new List<int>(); // all not visited neighbours
                                 List<int> indirectDestinations = new List<int>();// all neighbours with not visited neighbours
@@ -83,8 +90,9 @@ namespace project
                                 }
                             }
                         }
+                        else { v.ProgressEating(); } //eat
                     }
-                    else { v.ProgressEating(); } //eat
+                    
 
                 }
                 foreach (KeyValuePair<int, FoodTruck> k in layout)
@@ -93,16 +101,30 @@ namespace project
                 }
                 currentTimeFrame++;
             }
-            foreach (KeyValuePair<int, FoodTruck> k in layout)
+           
+            /*foreach (KeyValuePair<int, FoodTruck> k in layout)
             {
-                Console.WriteLine("APPEAL: {0} LOCATION: {1}", k.Value.appeal,k.Value.location);
-                foreach (int i in k.Value.queueArray)
+                Console.WriteLine("APPEAL: {0} LOCATION: {1}", k.Value.appeal, k.Value.location);
+                for (int i = 0; i < maxTimeFrame; i++)
                 {
-                    Console.WriteLine(i);
+                    int gotInLine = k.Value.gotInLine[i];
+                    int didntGetInLine = k.Value.didntGetInLine[i];
+                    double percentage;
+                    if (didntGetInLine+gotInLine == 0)
+                        percentage = 0;
+                    else percentage = (double)gotInLine / (double)(gotInLine+didntGetInLine);
+                    Console.WriteLine("GOTINLINE: {0} DIDNTGETINLINE: {1} QUEUETIME:{2} APPEAL: {3}", gotInLine,didntGetInLine, k.Value.queueArray[i],k.Value.actualAppeal[i]);
                 }
                 Console.WriteLine("-----------------------------------------------------------------------------");
+            }*/
+            writer.OpenWorksheet();
+            foreach(KeyValuePair<int,FoodTruck> k in layout)
+            {
+                writer.WriteArrays(k.Value);
             }
-            while (true)
+            currentsimulation++;
+            writer.SaveSheet();
+            //while (true)
             {
 
             }
@@ -114,41 +136,31 @@ namespace project
             currentTimeFrame = 0;
             maxTimeFrame = 480;
             peakTime = 280;
-            peakNewVisitors = 10;
-            visitorsInQueue = 0;
             layout = new Dictionary<int, FoodTruck>();
             visitors = new List<Visitor>();
-            writer = new ExcelWriter(excelFilePath);
             r = new Random();
             InitialiseFoodTrucks();
         }
         static void InitialiseFoodTrucks()
         {
-            bool[] valueAssigned = new bool[numberOfFoodtrucks]; //if appeal was assigned already
-            int initialised_trucks = 0;
-            double increment = 1 / numberOfFoodtrucks;
-            while (initialised_trucks < numberOfFoodtrucks)
+            for(int i = 0; i < numberOfFoodtrucks; i++)
             {
-                int rnd = r.Next(0, 7);
-                if (!valueAssigned[rnd])
-                {
-                    FoodTruck truck = new FoodTruck(initialised_trucks, appeals[rnd]);
-                    layout.Add(initialised_trucks, truck);
-                    valueAssigned[rnd] = true;
-                    initialised_trucks++;
-                }
+                FoodTruck truck = new FoodTruck(i, 0.3);
+                layout.Add(i, truck);
             }
             InitialiseLayout();
         }
+        //Initialise the layout of neighbours
         static void InitialiseLayout()
         {
             layout[0].neighbours.Add(1); layout[0].neighbours.Add(2);
             layout[1].neighbours.Add(0); layout[1].neighbours.Add(3);
             layout[2].neighbours.Add(0); layout[2].neighbours.Add(3); layout[2].neighbours.Add(4); layout[2].neighbours.Add(5);
-            layout[3].neighbours.Add(1); layout[3].neighbours.Add(2); layout[3].neighbours.Add(4);
-            layout[4].neighbours.Add(2); layout[4].neighbours.Add(3); layout[4].neighbours.Add(6);
+            layout[3].neighbours.Add(1); layout[3].neighbours.Add(2); layout[3].neighbours.Add(4); layout[3].neighbours.Add(7);
+            layout[4].neighbours.Add(2); layout[4].neighbours.Add(3); layout[4].neighbours.Add(6); layout[4].neighbours.Add(7);
             layout[5].neighbours.Add(2); layout[5].neighbours.Add(6);
-            layout[6].neighbours.Add(4); layout[6].neighbours.Add(5);
+            layout[6].neighbours.Add(4); layout[6].neighbours.Add(5); layout[6].neighbours.Add(7);
+            layout[7].neighbours.Add(3); layout[7].neighbours.Add(4); layout[7].neighbours.Add(6);
         }
         static int incomingVisitors() //incoming visitors on current timeframe
         {
@@ -166,25 +178,32 @@ namespace project
         public double appeal;
         public Queue<Visitor> queue;
         int servingProgress;
-        public int serviceRate; //amount of customers helped in 1 timeframe
+        public int serviceRate; //time after which customers are helped
+        public int servedPerRate; //amount of customers served every service time
         public int location;
         public int[] queueArray; //array to store the queue length on each timeframe
         public List<int> neighbours; //neighbours with the distance to the neighbour
-
+        public int[] gotInLine;
+        public int[] didntGetInLine;
+        public double[] actualAppeal; //appeal with queuesize taken into account
         public FoodTruck(int location, double appeal)
         {
             queueArray = new int[Program.maxTimeFrame];
+            gotInLine = new int[Program.maxTimeFrame];
+            didntGetInLine = new int[Program.maxTimeFrame];
+            actualAppeal = new double[Program.maxTimeFrame];
             servingProgress = 0;
             this.location = location;
             this.appeal = appeal;
             neighbours = new List<int>();
             serviceRate = 1;
+            servedPerRate = 2;
             queue = new Queue<Visitor>();
         }
 
         public double QueueTime()
         {
-            return (queue.Count * serviceRate);
+            return (queue.Count * (serviceRate/servedPerRate));
         }
 
         public void AddNeighbour(int trucklocation)
@@ -194,17 +213,34 @@ namespace project
         public void ProgressServing()
         {
             queueArray[Program.currentTimeFrame] = queue.Count;     //store the queue size
+            writeAppeal();                                          //store appeal
             if (queue.Count != 0)                                   //continue serving
             {
                 servingProgress++;                      
                 if (servingProgress == serviceRate)
                 {
                     servingProgress = 0;
-                    Visitor v = queue.Dequeue();
-                    v.waiting = false;
-                    v.isEating = true;
+                    for (int i = 0; i < servedPerRate; i++)
+                    {
+                        if (queue.Count > 0)
+                        {
+                            Visitor v = queue.Dequeue();
+                            v.waiting = false;
+                            v.isEating = true;
+                        }
+                    }
                 }
             }
+        }
+        void writeAppeal()
+        {
+            if (QueueTime() >= Program.maxQueueTime)
+                actualAppeal[Program.currentTimeFrame] = 0;
+            else if (QueueTime() >= Program.maxQueueTime/2)
+            {
+                actualAppeal[Program.currentTimeFrame] = Math.Max(0, (appeal - (0.5 * appeal * (QueueTime() / 20))));
+            }
+            else actualAppeal[Program.currentTimeFrame]= appeal;
         }
     }
     class Visitor
@@ -213,19 +249,17 @@ namespace project
         public int location;
         public int arrivedTime; // arrived time
         public int visitedFoodtrucks; // amount of foodtrucks visited
-        public double maxQueueTime; //maximum acceptable queuetime for a visitor
         public int maxTotalTime; //maximum acceptable totaltime at the festival for a visitor
         public bool[] locationsVisited; //location and wether or not he has visited it
         public bool isEating;
         int eatingProgress;
-        const int eatingTime = 5; //takes 5 minutes to eat
+        const int eatingTime = 7; //takes 7 minutes to eat
         public Visitor(int arrivedTime)
         {
             this.arrivedTime = arrivedTime;
             location = 0;
             visitedFoodtrucks = 0;
             waiting = false;
-            maxQueueTime = MaxTime();
             locationsVisited = new bool[Program.numberOfFoodtrucks];
             isEating = false;
             eatingProgress = 0;
@@ -234,7 +268,12 @@ namespace project
 
         public double ChanceOfLeaving()
         {
-            return ((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks) * ((double)(Program.currentTimeFrame - arrivedTime) / (double)maxTotalTime);
+            double closingProgress = (Program.currentTimeFrame / Program.maxTimeFrame);
+            if (closingProgress > 0.9)
+            {
+                return (0.5*closingProgress)+((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks) * ((double)(Program.currentTimeFrame - arrivedTime) / (double)maxTotalTime);
+            }
+            return ((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks);
         }
 
         public void GetInLine(FoodTruck truck)
@@ -257,15 +296,13 @@ namespace project
         }
         public double ChanceQueueing(FoodTruck truck)
         {
-            return Math.Max(0, (truck.appeal - truck.appeal * (truck.QueueTime() / maxQueueTime)));
-        }
-
-        public void GoToFoodtruck(FoodTruck truck)
-        {
-            location = truck.location;
-            waiting = true;
-            visitedFoodtrucks++;
-            //truck.queue++;
+            if (truck.QueueTime() >= Program.maxQueueTime)
+                return 0;
+            if (truck.QueueTime() >= 10)
+            {
+                return Math.Max(0, (truck.appeal - (0.5*truck.appeal * (truck.QueueTime() / Program.maxQueueTime))));
+            }
+            return truck.appeal;
         }
 
         int MaxTime()

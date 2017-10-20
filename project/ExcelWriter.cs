@@ -10,15 +10,17 @@ namespace project
     class ExcelWriter
     {
         string filepath;
+        int trucksWritten = 0;
+        Application oXL;
+        _Workbook oWB;
+        _Worksheet oSheet;
+        const int outputWidth = 6;
         public ExcelWriter(string filepath)
         {
             this.filepath = filepath;
         }
-        public void WriteStuff()
+        public void OpenWorksheet()
         {
-            Application oXL;
-            _Workbook oWB;
-            _Worksheet oSheet;
             Range oRng;
             object misvalue = System.Reflection.Missing.Value;
 
@@ -31,33 +33,51 @@ namespace project
             //Get a new workbook.
             oWB = (_Workbook)(oXL.Workbooks.Add(""));
             oSheet = (_Worksheet)oWB.ActiveSheet;
-
-            //Add table headers going cell by cell.
-            oSheet.Cells[1, 1] = "Sudoku Size";
-            oSheet.Cells[1, 2] = "Runtime (milliseconds)";
-            oSheet.Cells[1, 3] = "S value";
-            oSheet.Cells[1, 4] = "Random Walk Threshhold";
-            //Format A1:D1 as bold, vertical alignment = center.
-            oSheet.get_Range("A1", "D1").Font.Bold = true;
-            oSheet.get_Range("A1", "D1").VerticalAlignment =
+            oSheet.get_Range("A2", "AZ2").Font.Bold = true;
+            oSheet.get_Range("A2", "AZ2").HorizontalAlignment =
                  XlVAlign.xlVAlignCenter;
-
-           
-            // oSheet.Unprotect();
-
-
+        }
+        public void SaveSheet()
+        {
             oXL.Visible = false;
             oXL.UserControl = false;
-            string name = "kek";
+            string name = String.Format("Peak Visitors = {0}",Program.peakNewVisitors);
             oWB.SaveAs(filepath + name, XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
                 false, false, XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
 
             oWB.Close();
-            //  }
-            //  catch
-            // {
-            //     Console.WriteLine("error writing to excel file");
-            // }
+        }
+        public void WriteArrays(FoodTruck truck)
+        {
+            oSheet.Cells[1, 1 + trucksWritten * outputWidth] = String.Format("Truck At Position {0}", truck.location);
+            oSheet.Cells[2,1 + trucksWritten * outputWidth] = "Current Time Frame";
+            oSheet.Cells[2,2 + trucksWritten * outputWidth] = "Queue Size";
+            oSheet.Cells[2, 3 + trucksWritten * outputWidth] = "Current Appeal";
+            oSheet.Cells[2, 4 + trucksWritten * outputWidth] = "Visitors that got in line";
+            oSheet.Cells[2, 5 + trucksWritten * outputWidth] = "Visitors that didn't get in line";
+            //The timeframes
+            for(int i = 0; i < Program.maxTimeFrame; i++)
+            {
+                oSheet.Cells[3 + i, 1 + trucksWritten * outputWidth] = i;
+            }
+            WriteArray(oSheet, truck.queueArray, null, 2);
+            WriteArray(oSheet, null, truck.actualAppeal, 3);
+            WriteArray(oSheet, truck.gotInLine, null, 4);
+            WriteArray(oSheet, truck.didntGetInLine, null, 5);
+            trucksWritten++;
+        }
+        public void WriteArray(_Worksheet oSheet, int[] intArray, double[] doubleArray, int xOffset)
+        {
+            if(intArray!=null)
+                for(int i = 0; i < intArray.Length; i++)
+                {
+                    oSheet.Cells[3 + i, trucksWritten * outputWidth+xOffset] = intArray[i];
+                }
+            if (doubleArray != null)
+                for (int i = 0; i < doubleArray.Length; i++)
+                {
+                    oSheet.Cells[3 + i, trucksWritten * outputWidth + xOffset] = doubleArray[i];
+                }
         }
     }
 }
