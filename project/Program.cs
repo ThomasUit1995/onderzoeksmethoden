@@ -21,11 +21,15 @@ namespace project
         public static Dictionary<int, FoodTruck> layout; //Foodtrucks and their numbered location in the layout;
         public static List<Visitor> visitors;
         public static ExcelWriter writer;
-        public const double chanceOfEntering = 0.2;
+        public static double chanceOfEntering;
         public static Random r; //random number generator
 
         static void Main(string[] args)
         {
+            foreach(string s in args)
+            {
+                chanceOfEntering = double.Parse(s);
+            }
             Initialise();
             //TODO: Initialise foodtrucks
             while (currentsimulation < amountOfSimulations)
@@ -275,7 +279,7 @@ namespace project
            // {
            //     return (0.5*closingProgress)+((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks) * ((double)(Program.currentTimeFrame - arrivedTime) / (double)maxTotalTime);
            // }
-            return ((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks);
+            return 0.3* ((double)visitedFoodtrucks / (double)Program.numberOfFoodtrucks);
         }
 
         public void GetInLine(FoodTruck truck)

@@ -1,0 +1,10 @@
+start project.exe 0.1
+start project.exe 0.2
+start project.exe 0.3
+start project.exe 0.4
+start project.exe 0.5
+start project.exe 0.6
+start project.exe 0.7
+start project.exe 0.8
+start project.exe 0.9
+start project.exe 1.0
