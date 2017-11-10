@@ -1,0 +1,8 @@
+layout[0].neighbours.Add(1); layout[0].neighbours.Add(3); layout[0].neighbours.Add(4); layout[0].neighbours.Add(7); 
+            layout[1].neighbours.Add(0); layout[1].neighbours.Add(2);
+            layout[2].neighbours.Add(1); layout[2].neighbours.Add(3); 
+            layout[3].neighbours.Add(0); layout[3].neighbours.Add(2);
+            layout[4].neighbours.Add(0); layout[4].neighbours.Add(5);
+            layout[5].neighbours.Add(4); layout[5].neighbours.Add(6);
+            layout[6].neighbours.Add(5); layout[6].neighbours.Add(7);
+            layout[7].neighbours.Add(0); layout[7].neighbours.Add(6);

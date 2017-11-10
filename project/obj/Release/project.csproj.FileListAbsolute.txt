@@ -5,3 +5,7 @@ D:\onderzoeksmethoden\project\obj\Release\project.csproj.ResolveComReference.cac
 D:\onderzoeksmethoden\project\obj\Release\project.exe
 D:\onderzoeksmethoden\project\obj\Release\project.pdb
 D:\onderzoeksmethoden\project\obj\Release\project.csprojResolveAssemblyReference.cache
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\bin\Release\project.exe.config
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Release\project.csproj.ResolveComReference.cache
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Release\project.exe
+C:\Users\Thomas\Documents\2017-2018\p1_ondezoeksmethoden_gametech\code\onderzoeksmethoden\project\obj\Release\project.pdb
